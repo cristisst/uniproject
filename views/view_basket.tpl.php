@@ -67,9 +67,52 @@
 
     // Attach event listener to all buttons with class `remove-item`
     document.addEventListener('DOMContentLoaded', () => {
+
         // Attach event listeners for increment and decrement buttons
         const decrementButtons = document.querySelectorAll('.decrement-quantity');
         const incrementButtons = document.querySelectorAll('.increment-quantity');
+
+        // Add event listener for Remove buttons
+        const removeButtons = document.querySelectorAll('.remove-item');
+
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default link behavior
+
+                const productId = this.getAttribute('data-product-id');
+
+                if (confirm('Are you sure you want to remove this item?')) {
+                    removeItemFromBasket(productId);
+                }
+            });
+        });
+
+        /**
+         * Function to delete an item from the basket
+         * and update the UI accordingly.
+         */
+        function removeItemFromBasket(productId) {
+            axios.delete(`/api/v1/basket/delete/${productId}`) // DELETE request to backend
+                .then(response => {
+                    const updatedBasket = response.data;
+                    console.log('Basket after deletion:', updatedBasket);
+
+                    // Remove the row for the deleted product
+                    const productRow = document.querySelector(`tr td .remove-item[data-product-id="${productId}"]`).closest('tr');
+                    if (productRow) {
+                        productRow.remove();
+                    }
+
+                    // Update the basket totals in the UI
+                    const basketTotalCell = document.getElementById('basket-total');
+                    basketTotalCell.textContent = updatedBasket.basketTotal;
+
+                    if (updatedBasket.basketItems.length === 0) {
+                        alert('Your basket is now empty.');
+                    }
+                })
+        }
+
 
         // Add listeners for decrement buttons
         decrementButtons.forEach(button => {

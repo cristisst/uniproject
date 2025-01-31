@@ -70,7 +70,7 @@
                         <h5 class="card-title">{{ $product['name'] }}</h5>
                         <p class="card-text">£ {{ $product['price'] }}</p>
                         <a href="/product/{{ $product['id'] }}" class="btn btn-info">Details</a>
-                        <a href="/basket/add/{{ $product['id'] }}" class="btn btn-success">Add to Basket</a>
+                        <a href="/basket/add/{{ $product['id'] }}" data-product-id="{{ $product['id'] }}" class="btn btn-success">Add to Basket</a>
                     </div>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text">£ ${product.price}</p>
                                         <a href="/product/${product.id}" class="btn btn-info">Details</a>
-                                        <a href="/basket/add/${product.id}" class="btn btn-success">Add to Basket</a>
+                                        <a href="/basket/add/${product.id}" data-product-id="${product.id}" class="btn btn-success">Add to Basket</a>
                                     </div>
                                 </div>
                             </div>
@@ -169,22 +169,76 @@
 
         });
 
+        const showSuccessModal = () => {
+            // Create the modal structure
+            const modalHtml = `
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Product successfully added to the basket!
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Continue Shopping</button>
+                                <button type="button" class="btn btn-primary" id="viewBasketButton">View Basket</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Append modal to the body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'), {
+                keyboard: true
+            });
+            successModal.show();
+
+            // Add an event listener to the "View Basket" button
+            document.getElementById('viewBasketButton').addEventListener('click', () => {
+                window.location.href = '/basket'; // Redirects to the basket page
+            });
+
+            // Cleanup modal after it's hidden
+            document.getElementById('successModal').addEventListener('hidden.bs.modal', () => {
+                document.getElementById('successModal').remove();
+            });
+        };
+
+
         // Event delegation for "Add to Basket" buttons
-        document.addEventListener('click', (event) => {
+        document.addEventListener('click', async (event) => {
             const target = event.target;
 
             if (target.classList.contains('btn-success')) {
                 event.preventDefault(); // Prevent default link behavior
 
-                // Get the URL of the clicked button
-                const productUrl = target.getAttribute('href');
+                // Get the product ID from the data attribute
+                const productId = target.getAttribute('data-product-id');
 
-                // Example action: Log or send request (replace with your functionality)
-                console.log(`Adding product to basket from URL: ${productUrl}`);
+                // Make a POST request to add the product to the basket
+                try {
+                    const response = await axios.post('/api/v1/basket/add', {
+                        product_id: productId // Send product ID in the payload
+                    });
 
-                // Example: Display confirmation (replace or extend with real implementation)
-                alert('Product added to the basket!');
+                    // If the request is successful, show the modal
+                    if (response.status === 200) {
+                        // alert('Successfully added the product to the basket.');
+                        showSuccessModal();
+                    }
+                } catch (error) {
+                    // Handle errors (e.g., show an error message to the user)
+                    console.error('Error adding product to basket:', error);
+                    alert('Failed to add the product to the basket. Please try again.');
+                }
             }
+
         });
     });
 </script>
