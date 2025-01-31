@@ -83,6 +83,11 @@ class ProductController
     public function search(Request $request)
     {
         $queryString = $request->getQueryParams();
+
+        if (empty($queryString)) {
+            return [];
+        }
+
         $sql = 'SELECT * FROM products ';
         $sql .= ' WHERE (name LIKE "%' . $queryString['query'] . '%"  OR description LIKE "%' . $queryString['query'] . '%")';
         if (array_key_exists('min_price', $queryString)) {

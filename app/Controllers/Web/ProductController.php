@@ -19,7 +19,7 @@ class ProductController extends BaseController
         $products = [];
 
         $queryString = $request->getQueryParams();
-        $queryString = $queryString['q'] ?? '';
+        $queryString = $queryString['query'] ?? '';
 
         $sql = 'SELECT * FROM products';
         $sql .= ' WHERE (name LIKE "%' . $queryString . '%" OR description LIKE "%' . $queryString . '%")';

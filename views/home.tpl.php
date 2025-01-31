@@ -69,7 +69,7 @@
         };
 
         fetchProducts('/api/v1/products/featured', featuredProductsContainer);
-        fetchProducts('/api/v1/products/?sort=Newest', newArrivalsProductsContainer);
+        fetchProducts('/api/v1/products/?sort=newest', newArrivalsProductsContainer);
     });
 </script>
 

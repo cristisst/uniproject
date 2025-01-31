@@ -47,7 +47,7 @@
 
                 <!-- Search Box -->
                 <form class="d-flex" role="search" action="/search" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Search Products" aria-label="Search">
+                    <input class="form-control me-2" type="search" name="query" placeholder="Search Products" aria-label="Search">
                     <button class="btn btn-outline-light" type="submit">Search</button>
                 </form>
 
