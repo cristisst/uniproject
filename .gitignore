@@ -1,0 +1,5 @@
+/database/database.sqlite
+/composer.lock
+/vendor
+/.idea
+/cache
