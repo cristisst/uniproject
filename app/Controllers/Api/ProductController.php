@@ -98,8 +98,8 @@ class ProductController
             $sql .= ' AND price <= ' . $queryString['max_price'];
         }
 
-        if (array_key_exists('category_id', $queryString)) {
-            $sql .= ' AND category_id = ' . $queryString['category_id'];
+        if (array_key_exists('category', $queryString)) {
+            $sql .= ' AND category_id = ' . $queryString['category'];
         }
 
         $sql .= $this->sort($queryString);
